@@ -17,6 +17,7 @@ import control
 import control_socket
 import control_irc
 import redis_process
+import web
 import redis_client
 from twisted.internet import reactor, task
 
@@ -41,12 +42,12 @@ control.subscribe(log_to_stdout)
 
 task.LoopingCall(print_message).start(15)
 
-control_socket.install_control_handler()
-control_irc.install_irc_handler()
-
 def got_redis_client():
     print 'Connected to Redis server'
+    control_socket.install_control_handler()
+    control_irc.install_irc_handler()
     import schedule_db
+    web.install_web_handler()
 
 def got_redis_server():
     redis_client.run_redis_client(got_redis_client)
