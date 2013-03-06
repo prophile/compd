@@ -4,15 +4,16 @@ import config
 
 connection = None
 
-@defer.inlineCallbacks
 def run_redis_client(on_started):
-    pony = yield redis.makeConnection(config.redis['host'],
-                                      config.redis['port'],
-                                      config.redis['db'],
-                                      poolsize = 8,
-                                      reconnect = True,
-                                      isLazy = True)
-    global connection
-    connection = pony
-    on_started()
+    df = redis.makeConnection(config.redis['host'],
+                              config.redis['port'],
+                              config.redis['db'],
+                              poolsize = 8,
+                              reconnect = True,
+                              isLazy = False)
+    def done(pony):
+        global connection
+        connection = pony
+        on_started()
+    df.addCallback(done)
 
