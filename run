@@ -6,5 +6,5 @@ if [ ! -d dep ]
 fi
 source dep/bin/activate
 cd src
-exec python compd.py
+exec python compd.py $@
 
