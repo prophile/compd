@@ -6,4 +6,9 @@ easy_install twisted
 easy_install txredisapi
 easy_install pyyaml
 easy_install docopt
+if [ ! -f config.yaml ]
+  then
+    cp config.yaml.example config.yaml
+    echo "Installing default configuration, please change this!"
+fi
 

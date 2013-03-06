@@ -1,0 +1,6 @@
+# Message displayed on startup
+message: Hello, world!
+
+# You should probably make this 'true'
+run: false
+
