@@ -1,6 +1,6 @@
 import control
 import mock
-import sys
+import twisted.internet
 
 def test_halt_parse():
     options = control.parse('halt')
@@ -18,10 +18,10 @@ def test_usage():
 def test_halt():
     exit_handler = mock.Mock()
     responder = mock.Mock()
-    with mock.patch('sys.exit', exit_handler):
+    with mock.patch('twisted.internet.reactor.stop', exit_handler):
         control.handle('halt', responder)
         responder.assert_called_once_with('System going down for halt')
-        exit_handler.assert_called_once_with(0)
+        exit_handler.assert_called_once_with()
 
 def test_unknown():
     responder = mock.Mock()

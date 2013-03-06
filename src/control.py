@@ -47,9 +47,9 @@ def handle_usage(responder, opts):
 
 @handler('halt')
 def halt_system(responder, options):
-    import sys
+    from twisted.internet import reactor
     responder("System going down for halt")
-    sys.exit(0)
+    reactor.stop()
 
 def default_responder(output):
     print output
