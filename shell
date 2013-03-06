@@ -1,0 +1,10 @@
+#!/bin/bash -i
+if [ ! -d dep ]
+  then
+    echo "No 'dep' directory... did you run ./install?"
+    exit 1
+fi
+source dep/bin/activate
+export PS1="compd> "
+exec bash
+
