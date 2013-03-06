@@ -13,6 +13,7 @@ from docopt import docopt
 from subprocess import check_output
 import config
 import sys
+import control_socket
 from twisted.internet import reactor, task
 
 GIT_VERSION = check_output(('git', 'describe', '--always')).strip()
@@ -30,6 +31,8 @@ def print_message():
     print config.message
 
 task.LoopingCall(print_message).start(1.5)
+
+control_socket.install_control_handler()
 
 reactor.run()
 

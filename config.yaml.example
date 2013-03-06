@@ -4,3 +4,6 @@ message: Hello, world!
 # You should probably make this 'true'
 run: false
 
+# Control port
+control_port: 18333
+
