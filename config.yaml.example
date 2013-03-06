@@ -7,3 +7,13 @@ run: false
 # Control port
 control_port: 18333
 
+# IRC control configuration
+irc:
+    server: irc.freenode.net
+    port: 6667
+    nick: compdman
+    user: compdman
+    gecos: Compd Controller
+    channel: "#srobo-comp-ops"
+    enable: false
+
