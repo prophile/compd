@@ -13,6 +13,7 @@ from docopt import docopt
 from subprocess import check_output
 import config
 import sys
+from twisted.internet import reactor, task
 
 GIT_VERSION = check_output(('git', 'describe', '--always')).strip()
 VERSION = 'compd {0}'.format(GIT_VERSION)
@@ -24,5 +25,11 @@ config.load_config(options['--config'])
 if not config.run:
     print >>sys.stderr, "config.yaml demands that we immediately halt"
     sys.exit(1)
-print config.message
+
+def print_message():
+    print config.message
+
+task.LoopingCall(print_message).start(1.5)
+
+reactor.run()
 
