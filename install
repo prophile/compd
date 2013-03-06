@@ -6,6 +6,7 @@ easy_install twisted
 easy_install txredisapi
 easy_install pyyaml
 easy_install docopt
+easy_install nose
 if [ ! -f config.yaml ]
   then
     cp config.yaml.example config.yaml
