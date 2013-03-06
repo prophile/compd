@@ -23,10 +23,11 @@ Getting Started
 
 To install:
 
-1. Install virtualenv (via, eg, *sudo easy_install virtualenv*)
-2. Run *./install*
+1. Install redis, version 2.6 or later
+2. Install virtualenv (via, eg, *sudo easy_install virtualenv*)
+3. Run *./install*
 
-All dependencies, through the magic of virtualenv, are installed locally - in the *dep* directory as a matter of fact.
+All other dependencies, through the magic of virtualenv, are installed locally - in the *dep* directory as a matter of fact.
 
 To run, use *./run*.
 
