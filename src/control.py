@@ -35,7 +35,7 @@ def handler(subcommand):
 
 def dispatch(options, responder):
     for name, callback in HANDLERS.iteritems():
-        if options[name]:
+        if options.get(name):
             callback(responder, options)
             return
     raise CommandError()
