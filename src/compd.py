@@ -46,6 +46,7 @@ control_irc.install_irc_handler()
 
 def got_redis_client():
     print 'Connected to Redis server'
+    import schedule_db
 
 def got_redis_server():
     redis_client.run_redis_client(got_redis_client)

@@ -3,6 +3,9 @@
 Usage:
   compctl halt
   compctl usage
+  compctl schedule (lunch | league | knockout | open | briefing | photos | prizes | tinker) <time>
+  compctl unschedule <id>
+  compctl show-schedule <from> <to>
 
 """
 
