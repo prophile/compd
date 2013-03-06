@@ -7,6 +7,7 @@ easy_install txredisapi
 easy_install pyyaml
 easy_install docopt
 easy_install nose
+easy_install coverage
 if [ ! -f config.yaml ]
   then
     cp config.yaml.example config.yaml

@@ -6,5 +6,5 @@ if [ ! -d dep ]
 fi
 source dep/bin/activate
 cd src
-exec nosetests $@
+exec nosetests -w . $@
 
