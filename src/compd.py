@@ -18,7 +18,6 @@ GIT_VERSION = check_output(('git', 'describe', '--always')).strip()
 VERSION = 'compd {0}'.format(GIT_VERSION)
 
 options = docopt(__doc__, version = VERSION)
-print options
 
 config.load_config(options['--config'])
 
