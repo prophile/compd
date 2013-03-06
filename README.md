@@ -28,6 +28,8 @@ To install:
 
 All dependencies, through the magic of virtualenv, are installed locally - in the *dep* directory as a matter of fact.
 
+To run, use *./run*.
+
 To develop, enter the virtualenv using *./shell*.
 
 Credit
