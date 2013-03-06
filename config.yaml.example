@@ -17,3 +17,13 @@ irc:
     channel: "#srobo-comp-ops"
     enable: false
 
+# Redis server configuration
+# The redis server is run by compd
+# so don't change these unless you know what you are doing
+redis:
+    host: localhost
+    port: 10056
+    db: 0
+    # Okay, you can change this one
+    server: /usr/local/bin/redis-server
+

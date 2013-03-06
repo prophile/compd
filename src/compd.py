@@ -15,6 +15,7 @@ import config
 import sys
 import control_socket
 import control_irc
+import redis_process
 from twisted.internet import reactor, task
 
 GIT_VERSION = check_output(('git', 'describe', '--always')).strip()
@@ -35,6 +36,11 @@ task.LoopingCall(print_message).start(1.5)
 
 control_socket.install_control_handler()
 control_irc.install_irc_handler()
+
+def got_redis():
+    print 'Redis is le running'
+
+redis_process.run_redis_server(got_redis)
 
 reactor.run()
 
