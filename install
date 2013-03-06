@@ -8,6 +8,7 @@ easy_install pyyaml
 easy_install docopt
 easy_install nose
 easy_install coverage
+easy_install mock
 if [ ! -f config.yaml ]
   then
     cp config.yaml.example config.yaml
