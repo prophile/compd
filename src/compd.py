@@ -10,7 +10,7 @@ Options:
 """
 
 from docopt import docopt
-from subprocess import check_output
+from subprocess import check_output, CalledProcessError
 import config
 import sys
 import control
@@ -21,7 +21,10 @@ import web
 import redis_client
 from twisted.internet import reactor, task
 
-GIT_VERSION = check_output(('git', 'describe', '--always')).strip()
+try:
+    GIT_VERSION = check_output(('git', 'describe', '--always')).strip()
+except CalledProcessError:
+    GIT_VERSION = '?'
 VERSION = 'compd {0}'.format(GIT_VERSION)
 
 options = docopt(__doc__, version = VERSION)
