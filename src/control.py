@@ -14,7 +14,7 @@ class CommandError(Exception):
     pass
 
 def parse(cmd):
-    parts = shlex.split(cmd)
+    parts = shlex.split(cmd.strip())
     try:
         options = docopt(__doc__, argv = parts,
                          help = False, version = None)
