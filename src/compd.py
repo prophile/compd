@@ -13,6 +13,7 @@ from docopt import docopt
 from subprocess import check_output
 import config
 import sys
+import control
 import control_socket
 import control_irc
 import redis_process
@@ -31,9 +32,14 @@ if not config.run:
     sys.exit(1)
 
 def print_message():
-    print config.message
+    control.broadcast(config.message)
 
-task.LoopingCall(print_message).start(1.5)
+# Set up logging to stdout
+def log_to_stdout(message):
+    print message
+control.subscribe(log_to_stdout)
+
+task.LoopingCall(print_message).start(15)
 
 control_socket.install_control_handler()
 control_irc.install_irc_handler()

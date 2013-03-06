@@ -13,6 +13,10 @@ class IRCBot(irc.IRCClient):
 
     def signedOn(self):
         self.join(self.channel)
+        control.subscribe(self.broadcast_info)
+
+    def broadcast_info(self, message):
+        self.say(self.channel, message)
 
     def privmsg(self, user, channel, msg):
         if channel != self.channel:

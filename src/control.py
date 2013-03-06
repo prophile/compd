@@ -63,3 +63,16 @@ def handle(cmd, responder = default_responder, no_auto_fail = False):
         else:
             handle('usage', responder, no_auto_fail = True)
 
+RECEIVERS = {}
+
+def broadcast(message):
+    for receiver in RECEIVERS.itervalues():
+        receiver(message)
+
+def subscribe(handler):
+    key = object()
+    RECEIVERS[key] = handler
+    def unsubscribe():
+        del RECEIVERS[key]
+    return unsubscribe
+
