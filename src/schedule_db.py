@@ -1,3 +1,5 @@
+"""Day schedule database."""
+
 from uuid import uuid4
 import redis_client
 import control
@@ -8,13 +10,22 @@ EVENT_TYPES = ('league', 'knockout', 'lunch', 'open',
                'tinker', 'photo', 'prizes', 'briefing')
 
 def create_id(prefix):
+    """Create a unique event ID. The prefix should specify the type of
+    event, one of EVENT_TYPES."""
     return '{0}-{1}'.format(prefix, str(uuid4())[:13])
 
 class ScheduleDB(object):
+    """A schedule database."""
     def __init__(self):
+        """Default constructor."""
         pass
 
     def create_event(self, time, type_):
+        """Schedule an event in the day. time should be given as a second
+        offset from the start of the day, and type_ should be one of
+        EVENT_TYPES.
+
+        Returns the ID of the event."""
         if type_ not in EVENT_TYPES:
             raise ValueError('unknown event type')
         id_ = create_id(type_)
@@ -24,10 +35,15 @@ class ScheduleDB(object):
         return id_
 
     def cancel_event(self, id_):
+        """Cancel an event in the day's schedule."""
         redis_client.connection.delete('comp:events:{0}'.format(id_))
         redis_client.connection.zrem('comp:schedule', id_)
 
     def events_between(self, start, end):
+        """Get events between a given start and end point, specified in
+        seconds from the start of the day.
+
+        Returns a Twisted Deferred on (id, time) pairs."""
         return redis_client.connection.zrangebyscore('comp:schedule',
                                                      start,
                                                      end,
@@ -36,9 +52,12 @@ class ScheduleDB(object):
 schedule = ScheduleDB()
 
 class ParseError(Exception):
+    """Indicates an error when parsing time values."""
     pass
 
 def parse_time(s):
+    """Parse a human-readable time format into seconds from the start
+    of the day."""
     match = re.match('(\d+):(\d+)(?::(\d+))?', s)
     if match:
         hours = int(match.group(1))
@@ -49,6 +68,8 @@ def parse_time(s):
         raise ParseError()
 
 def format_time(n):
+    """Convert from seconds from the start of the day into a human-readable
+    time format."""
     seconds = n % 60
     minutes = n // 60
     hours = minutes // 60
@@ -57,6 +78,7 @@ def format_time(n):
 
 @control.handler('schedule')
 def perform_schedule(responder, options):
+    """Handle the `schedule` command."""
     try:
         time = parse_time(options['<time>'])
     except ParseError:
@@ -72,12 +94,14 @@ def perform_schedule(responder, options):
 
 @control.handler('unschedule')
 def perform_unschedule(responder, options):
+    """Handle the `unschedule` command."""
     id_ = options['<id>']
     schedule.cancel_event(id_)
     responder('Done!')
 
 @control.handler('show-schedule')
 def perform_show_schedule(responder, options):
+    """Handle the `show-schedule` command."""
     try:
         from_ = parse_time(options['<from>'])
         to_ = parse_time(options['<to>'])
