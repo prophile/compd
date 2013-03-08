@@ -9,7 +9,7 @@ def test_new():
     fake_connection = mock.Mock()
     fake_connection.zadd = mock.Mock()
     fake_connection.set = mock.Mock()
-    with mock.patch('schedule_db.uuid', uuid_handler), \
+    with mock.patch('schedule_db.create_id', uuid_handler), \
          mock.patch('redis_client.connection', fake_connection):
         rv = schedule_db.schedule.create_event(100, 'lunch')
         assert rv == 'eyes'

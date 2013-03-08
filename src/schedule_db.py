@@ -7,7 +7,7 @@ import re
 EVENT_TYPES = ('league', 'knockout', 'lunch', 'open',
                'tinker', 'photo', 'prizes', 'briefing')
 
-def uuid(prefix):
+def create_id(prefix):
     return '{0}-{1}'.format(prefix, str(uuid4())[:13])
 
 class ScheduleDB(object):
@@ -17,7 +17,7 @@ class ScheduleDB(object):
     def create_event(self, time, type_):
         if type_ not in EVENT_TYPES:
             raise ValueError('unknown event type')
-        id_ = uuid(type_)
+        id_ = create_id(type_)
         redis_client.connection.set('comp:events:{0}'.format(id_),
                                     type_)
         redis_client.connection.zadd("comp:schedule", time, id_)
