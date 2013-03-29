@@ -21,5 +21,5 @@ def run_redis_server(on_started):
     reactor.spawnProcess(RedisDataReceiver(on_started),
                          server,
                          args = [server, 'redis.conf'],
-                         path = '../redis/')
+                         path = '../database/')
 
