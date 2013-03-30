@@ -24,8 +24,9 @@ Getting Started
 To install:
 
 1. Install redis, version 2.6 or later
-2. Install virtualenv (via, eg, *sudo easy_install virtualenv*)
-3. Run *./install*
+2. Install python development tooling (via, eg, *sudo apt-get install python-dev*)
+3. Install virtualenv (via, eg, *sudo easy_install virtualenv*)
+4. Run *./install*
 
 All other dependencies, through the magic of virtualenv, are installed locally - in the *dep* directory as a matter of fact.
 
