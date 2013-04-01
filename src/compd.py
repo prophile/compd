@@ -34,15 +34,10 @@ if not config.run:
     print >>sys.stderr, "config.yaml demands that we immediately halt"
     sys.exit(1)
 
-def print_message():
-    control.broadcast(config.message)
-
 # Set up logging to stdout
 def log_to_stdout(message):
     print message
 control.subscribe(log_to_stdout)
-
-task.LoopingCall(print_message).start(15)
 
 def got_redis_client():
     print 'Connected to Redis server'
