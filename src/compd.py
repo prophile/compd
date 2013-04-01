@@ -48,10 +48,16 @@ def got_redis_client():
     print 'Connected to Redis server'
     control_socket.install_control_handler()
     control_irc.install_irc_handler()
+    print 'Loading schedule DB...'
     import schedule_db
+    print 'Loading team DB...'
     import team_db
+    print 'Loading screen DB...'
+    import screen_db
+    print 'Done configuring.'
 
 def got_redis_server():
+    print 'Redis server up, starting client.'
     redis_client.run_redis_client(got_redis_client)
 
 redis_process.run_redis_server(got_redis_server)

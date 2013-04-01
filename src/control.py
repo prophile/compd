@@ -16,6 +16,10 @@ Usage:
   compctl set-team-absent <tla>
   compctl list-teams
   compctl team <tla>
+  compctl screen-list
+  compctl screen-set-mode <id> <mode>
+  compctl screen-override <id> <message>
+  compctl screen-clear-override <id>
 
 """
 
@@ -40,6 +44,7 @@ HANDLERS = {}
 def handler(subcommand):
     def wrapper(fn):
         HANDLERS[subcommand] = fn
+        print "Installed command: {0}".format(subcommand)
         return fn
     return wrapper
 
