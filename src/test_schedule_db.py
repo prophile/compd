@@ -9,6 +9,7 @@ def test_new():
     fake_connection = mock.Mock()
     fake_connection.zadd = mock.Mock()
     fake_connection.set = mock.Mock()
+    fake_connection.publish = mock.Mock()
     with mock.patch('schedule_db.create_id', uuid_handler), \
          mock.patch('redis_client.connection', fake_connection):
         rv = schedule_db.schedule.create_event(100, 'lunch')
@@ -17,6 +18,8 @@ def test_new():
                                              100, 'eyes')
         fake_connection.set.assert_called_once_with('comp:events:eyes',
                                             'lunch')
+        fake_connection.publish.assert_called_once_with('comp:schedule',
+                                            'update')
         fake_connection.zadd.reset_mock()
         fake_connection.set.reset_mock()
         # Test for invalid event types
@@ -26,6 +29,7 @@ def test_new():
             # excellent, just make sure of things
             assert not fake_connection.zadd.called
             assert not fake_connection.set.called
+            # it does not matter if comp:schedule is called
         else:
             assert False
 
@@ -33,10 +37,13 @@ def test_cancel():
     fake_connection = mock.Mock()
     fake_connection.delete = mock.Mock()
     fake_connection.zrem = mock.Mock()
+    fake_connection.publish = mock.Mock()
     with mock.patch('redis_client.connection', fake_connection):
         schedule_db.schedule.cancel_event('eyes')
         fake_connection.delete.assert_called_once_with('comp:events:eyes')
         fake_connection.zrem.assert_called_once_with('comp:schedule', 'eyes')
+        fake_connection.publish.assert_called_once_with('comp:schedule',
+                                                        'update')
 
 def test_events_between():
     # should be passthrough

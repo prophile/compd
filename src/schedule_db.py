@@ -32,12 +32,14 @@ class ScheduleDB(object):
         redis_client.connection.set('comp:events:{0}'.format(id_),
                                     type_)
         redis_client.connection.zadd("comp:schedule", time, id_)
+        redis_client.connection.publish('comp:schedule', 'update')
         return id_
 
     def cancel_event(self, id_):
         """Cancel an event in the day's schedule."""
         redis_client.connection.delete('comp:events:{0}'.format(id_))
         redis_client.connection.zrem('comp:schedule', id_)
+        redis_client.connection.publish('comp:schedule', 'update')
 
     def events_between(self, start, end):
         """Get events between a given start and end point, specified in
