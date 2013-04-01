@@ -49,6 +49,7 @@ def got_redis_client():
     control_socket.install_control_handler()
     control_irc.install_irc_handler()
     import schedule_db
+    import team_db
 
 def got_redis_server():
     redis_client.run_redis_client(got_redis_client)
