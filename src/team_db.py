@@ -24,6 +24,7 @@ class TeamDB(object):
         # Fill in presence when teams arrive
         redis_client.connection.set('team:{0}:present'.format(tla),
                                     'no')
+        redis_client.connection.publish('team:update', 'update')
 
     def delete(self, tla):
         """Delete a team from the database entirely.
@@ -33,6 +34,7 @@ class TeamDB(object):
         for key in ('college', 'name', 'notes', 'present'):
             redis_client.connection.delete('team:{0}:{1}'.format(tla, key))
         # TODO: interact with other systems
+        redis_client.connection.publish('team:update', 'update')
 
     def update(self, tla, college = None, name = None, notes = None):
         """Update team details in the DB."""
@@ -43,6 +45,7 @@ class TeamDB(object):
                 continue
             redis_client.connection.set('team:{0}:{1}'.format(tla, key),
                                         value)
+        redis_client.connection.publish('team:update', 'update')
 
     # Presence is used, among other things, for determining whether a team
     # will be included in the match scheduling pool.
@@ -50,11 +53,13 @@ class TeamDB(object):
         """Mark a given team present."""
         # TODO: check the team actually exists
         redis_client.connection.set('team:{0}:present'.format(tla), 'yes')
+        redis_client.connection.publish('team:update', 'update')
 
     def mark_absent(self, tla):
         """Mark a given team absent."""
         # TODO: check the team actually exists
         redis_client.connection.set('team:{0}:present'.format(tla), 'no')
+        redis_client.connection.publish('team:update', 'update')
 
     @defer.inlineCallbacks
     def list(self):
