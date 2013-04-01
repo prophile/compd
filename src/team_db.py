@@ -2,6 +2,8 @@
 
 import redis_client
 import control
+from twisted.internet import defer
+import re
 
 class TeamDB(object):
     """A team database."""
@@ -53,6 +55,27 @@ class TeamDB(object):
         """Mark a given team absent."""
         # TODO: check the team actually exists
         redis_client.connection.set('team:{0}:present'.format(tla), 'no')
+
+    @defer.inlineCallbacks
+    def list(self):
+        # Take a census of team:*:college keys
+        keys = yield redis_client.connection.keys('team:*:college')
+        defer.returnValue([re.match('team:([a-zA-Z0-9]*):college', key).group(1)
+                             for key in keys])
+
+    @defer.inlineCallbacks
+    def get(self, team):
+        # Return team info dict
+        college, name, notes, present = \
+            yield redis_client.connection.mget(*['team:{0}:{1}'.format(team, x)
+                                                   for x in ('college',
+                                                             'name',
+                                                             'notes',
+                                                             'present')])
+        defer.returnValue({'college': college,
+                           'name': name,
+                           'notes': notes,
+                           'present': present == 'yes'})
 
 roster = TeamDB()
 
