@@ -1,0 +1,3 @@
+[submodule "match-scheduler"]
+	path = match-scheduler
+	url = http://github.com/prophile/match-scheduler.git
