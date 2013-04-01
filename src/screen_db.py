@@ -66,3 +66,8 @@ def perform_screen_clear_override(responder, options):
     screens.set_override(options['<id>'], None)
     responder('Override cleared.')
 
+def got_screen(name):
+    control.broadcast('Screen connected: {0}'.format(name))
+
+redis_client.add_subscribe('screen:connect', got_screen)
+
