@@ -17,7 +17,6 @@ import control
 import control_socket
 import control_irc
 import redis_process
-import web
 import redis_client
 from twisted.internet import reactor, task
 
@@ -50,7 +49,7 @@ def got_redis_client():
     control_socket.install_control_handler()
     control_irc.install_irc_handler()
     import schedule_db
-    web.install_web_handler()
+    import team_db
 
 def got_redis_server():
     redis_client.run_redis_client(got_redis_client)

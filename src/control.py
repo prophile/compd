@@ -6,6 +6,16 @@ Usage:
   compctl schedule (lunch | league | knockout | open | briefing | photo | prizes | tinker) <time>
   compctl unschedule <id>
   compctl show-schedule <from> <to>
+  compctl add-team <tla> <name> <college>
+  compctl del-team <tla>
+  compctl set-team-name <tla> <name>
+  compctl set-team-college <tla> <college>
+  compctl set-team-notes <tla> <notes>
+  compctl append-note <tla> <note>
+  compctl set-team-present <tla>
+  compctl set-team-absent <tla>
+  compctl list-teams
+  compctl team <tla>
 
 """
 
