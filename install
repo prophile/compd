@@ -14,4 +14,7 @@ if [ ! -f config.yaml ]
     cp config.yaml.example config.yaml
     echo "Installing default configuration, please change this!"
 fi
+git submodule update --init
+cd match-scheduler
+exec ./install
 
