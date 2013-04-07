@@ -9,6 +9,7 @@ easy_install docopt
 easy_install nose
 easy_install coverage
 easy_install mock
+easy_install parsedatetime
 if [ ! -f config.yaml ]
   then
     cp config.yaml.example config.yaml
