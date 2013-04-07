@@ -23,7 +23,7 @@ class IRCBot(irc.IRCClient):
     def privmsg(self, user, channel, msg):
         if channel != self.channel:
             return
-        prefix = '{0}:'.format(self.nickname)
+        prefix = '!'
         if not msg.startswith(prefix):
             return
         content = msg[len(prefix):]
