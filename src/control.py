@@ -72,12 +72,15 @@ def halt_system(responder, options):
 def default_responder(output):
     print output
 
-def handle(cmd, responder = default_responder, no_auto_fail = False):
+def handle(cmd, responder = default_responder, no_auto_fail = False,
+           short_fail = False):
     try:
         dispatch(parse(cmd), responder)
     except CommandError:
         if no_auto_fail:
             raise
+        elif short_fail:
+            responder('Syntax error.')
         else:
             handle('usage', responder, no_auto_fail = True)
 
