@@ -28,7 +28,7 @@ class IRCBot(irc.IRCClient):
         sender = re.match('(.*)!(.*)@(.*)', user).group(1)
         def responder(response):
             self.say(channel, '{0}: {1}'.format(sender, response))
-        control.handle(content, responder)
+        control.handle(content, responder, short_fail = True)
 
 class IRCBotFactory(protocol.ClientFactory):
     def __init__(self, configuration):
