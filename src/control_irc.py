@@ -5,15 +5,16 @@ import control
 import re
 
 class IRCBot(irc.IRCClient):
-    def __init__(self, nick, user, gecos, channel):
+    def __init__(self, nick, user, gecos, channel, key = None):
         self.nickname = nick
         self.realname = gecos
         self.username = user
         self.channel = channel
+        self.key = key
         self.lineRate = 0.35
 
     def signedOn(self):
-        self.join(self.channel)
+        self.join(self.channel, self.key)
         control.subscribe(self.broadcast_info)
 
     def broadcast_info(self, message):
@@ -39,7 +40,8 @@ class IRCBotFactory(protocol.ClientFactory):
         return IRCBot(self.configuration['nick'],
                       self.configuration['user'],
                       self.configuration['gecos'],
-                      self.configuration['channel'])
+                      self.configuration['channel'],
+                      self.configuration['key'])
 
 def install_irc_handler():
     configuration = config.irc

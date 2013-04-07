@@ -14,7 +14,8 @@ irc:
     nick: compdman
     user: compdman
     gecos: Compd Controller
-    channel: "#srobo-comp-ops"
+    channel: "#srobo-ops"
+    key: chanpass
     enable: false
 
 # Redis server configuration
