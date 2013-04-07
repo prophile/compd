@@ -4,6 +4,9 @@ from uuid import uuid4
 import redis_client
 import control
 import re
+import parsedatetime
+import time
+import datetime
 
 
 EVENT_TYPES = ('league', 'knockout', 'lunch', 'open',
@@ -58,25 +61,16 @@ class ParseError(Exception):
     pass
 
 def parse_time(s):
-    """Parse a human-readable time format into seconds from the start
-    of the day."""
-    match = re.match('(\d+):(\d+)(?::(\d+))?', s)
-    if match:
-        hours = int(match.group(1))
-        minutes = int(match.group(2))
-        seconds = int(match.group(3) or 0)
-        return 3600*hours + 60*minutes + seconds
-    else:
+    """Parse a human-readable time format into a UNIX timestamp."""
+    calendar = parsedatetime.Calendar()
+    result, accuracy = calendar.parse(s)
+    if accuracy == 0:
         raise ParseError()
+    return time.mktime(result)
 
 def format_time(n):
-    """Convert from seconds from the start of the day into a human-readable
-    time format."""
-    seconds = n % 60
-    minutes = n // 60
-    hours = minutes // 60
-    minutes %= 60
-    return '{0}:{1:02}:{2:02}'.format(hours, minutes, seconds)
+    """Convert from a UNIX timestamp into a human-readable time format."""
+    return str(datetime.datetime.fromtimestamp(n))
 
 @control.handler('schedule')
 def perform_schedule(responder, options):
