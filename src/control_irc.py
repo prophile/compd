@@ -10,6 +10,7 @@ class IRCBot(irc.IRCClient):
         self.realname = gecos
         self.username = user
         self.channel = channel
+        self.lineRate = 0.35
 
     def signedOn(self):
         self.join(self.channel)
