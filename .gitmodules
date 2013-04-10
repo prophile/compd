@@ -1,3 +1,6 @@
 [submodule "match-scheduler"]
 	path = match-scheduler
 	url = http://github.com/prophile/match-scheduler.git
+[submodule "src/ranker"]
+	path = src/ranker
+	url = git://github.com/PeterJCLaw/ranker.git
