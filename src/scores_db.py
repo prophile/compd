@@ -63,7 +63,7 @@ class ScoresDB(object):
         defer.returnValue(teams)
 
     @defer.inlineCallbacks
-    def match_scores(self, match):
+    def get_match_scores(self, match):
         # Get a dictionary of team => game points for a given match
         teams = yield self.teams_in_match(match)
         if len(teams) == 0:
@@ -87,7 +87,7 @@ class ScoresDB(object):
 scores = ScoresDB()
 
 @control.handler('set-score')
-def perform_set_scores(responder, options):
+def perform_set_score(responder, options):
     """Handle the `set-score` command."""
     match = options['<match-id>']
     tla = options['<tla>']
@@ -100,7 +100,7 @@ def perform_set_scores(responder, options):
 def perform_calc_league_points(responder, options):
     """Handle the `calc-league-points` command."""
     match = options['<match-id>']
-    match_scores = yield scores.match_scores(match)
+    match_scores = yield scores.get_match_scores(match)
     if match_scores is None:
         responder('No scores available for match {0}'.format(match))
         return
