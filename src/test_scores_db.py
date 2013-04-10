@@ -153,3 +153,65 @@ def test_teams_disqualified_in_match_empty():
         # Check that the right result was output
         info.addCallback(did_complete)
         did_complete.assert_called_once_with([])
+
+def test_get_match_score():
+    fake_connection = mock.Mock()
+    fake_score = defer.Deferred()
+    fake_score.callback(2)
+    fake_connection.get = mock.Mock(return_value = fake_score)
+    did_complete = mock.Mock()
+    with mock.patch('redis_client.connection', fake_connection):
+        # Get the value
+        info = scores_db.scores.get_match_score(1, 'ABC')
+
+        # Assert that the right things were called
+        fake_connection.get.assert_called_once_with('comp:scores:1:ABC:game')
+
+        # Check that the right result was output
+        info.addCallback(did_complete)
+        did_complete.assert_called_once_with(2)
+
+def test_get_match_scores():
+    fake_connection = mock.Mock()
+    fake_teams = defer.Deferred()
+    fake_teams.callback(['ABC', 'DEF'])
+    fake_get_teams = mock.Mock(return_value = fake_teams)
+    fake_score = defer.Deferred()
+    fake_score.callback([2,3])
+    fake_connection.mget = mock.Mock(return_value = fake_score)
+    did_complete = mock.Mock()
+    with mock.patch('scores_db.scores.teams_in_match', fake_get_teams), \
+         mock.patch('redis_client.connection', fake_connection):
+        # Get the value
+        info = scores_db.scores.get_match_scores(1)
+
+        # Assert that the right things were called
+        fake_get_teams.assert_called_once_with(1)
+        fake_connection.mget.assert_called_once_with(*['comp:scores:1:ABC:game',
+                                                       'comp:scores:1:DEF:game'])
+
+        # Check that the right result was output
+        info.addCallback(did_complete)
+        did_complete.assert_called_once_with({'ABC':2, 'DEF':3})
+
+def test_get_match_scores_empty():
+    fake_connection = mock.Mock()
+    fake_teams = defer.Deferred()
+    fake_teams.callback([])
+    fake_get_teams = mock.Mock(return_value = fake_teams)
+    fake_score = defer.Deferred()
+    fake_score.callback([2,3])
+    fake_connection.mget = mock.Mock(return_value = fake_score)
+    did_complete = mock.Mock()
+    with mock.patch('scores_db.scores.teams_in_match', fake_get_teams), \
+         mock.patch('redis_client.connection', fake_connection):
+        # Get the value
+        info = scores_db.scores.get_match_scores(1)
+
+        # Assert that the right things were called
+        fake_get_teams.assert_called_once_with(1)
+        assert not fake_connection.mget.called, "Should not query scores we don't have"
+
+        # Check that the right result was output
+        info.addCallback(did_complete)
+        did_complete.assert_called_once_with(None)
