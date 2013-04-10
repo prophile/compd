@@ -39,22 +39,26 @@ class ScoresDB(object):
 
     def disqualify(self, match, tla):
         """Disqualifies a given team in a given match."""
-        redis_client.connection.set('comp:scores:{0}:{1}:dsq'.format(match, tla),
-                                    True)
+        redis_client.connection.set('comp:scores:{0}:{1}:dsq'.format(match, tla), True)
+
+    def re_qualify(self, match, tla):
+        """Re-qualifies a given team in a given match.
+        Just in case a judge changes their mind."""
+        redis_client.connection.delete('comp:scores:{0}:{1}:dsq'.format(match, tla))
 
     @defer.inlineCallbacks
     def teams_in_match(self, match):
-        # Get a list of the teams in a given match
+        # Get a list of the teams in a given match for which we have game scores
         keys = yield redis_client.connection.keys('comp:scores:{0}:*:game'.format(match))
         teams = [re.match('comp:scores:{0}:([a-zA-Z0-9]*):game'.format(match), key).group(1)
                              for key in keys]
         defer.returnValue(teams)
 
     @defer.inlineCallbacks
-    def teams_diqualified_in_match(self, match):
+    def teams_disqualified_in_match(self, match):
         # Get a list of the teams disqualified in a given match
         keys = yield redis_client.connection.keys('comp:scores:{0}:*:dsq'.format(match))
-        teams = [re.match('comp:scores:{0}:([a-zA-Z0-9]*):game'.format(match), key).group(1)
+        teams = [re.match('comp:scores:{0}:([a-zA-Z0-9]*):dsq'.format(match), key).group(1)
                              for key in keys]
         defer.returnValue(teams)
 
@@ -100,7 +104,7 @@ def perform_calc_league_points(responder, options):
     if match_scores is None:
         responder('No scores available for match {0}'.format(match))
         return
-    dsq_teams = yield scores.teams_diqualified_in_match(match)
+    dsq_teams = yield scores.teams_disqualified_in_match(match)
     league_points = ranker.get_ranked_points(match_scores, dsq_teams)
     scores.set_league_points(match, league_points)
     for tla, pts in league_points.iteritems():
