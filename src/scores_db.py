@@ -95,6 +95,24 @@ def perform_set_score(responder, options):
     scores.set_match_score(match, tla, score)
     responder('Scored {0} points for {1} in match {2}'.format(score, tla, match))
 
+@control.handler('get-score')
+@defer.inlineCallbacks
+def perform_get_score(responder, options):
+    """Handle the `get-score` command."""
+    match = options['<match-id>']
+    tla = options['<tla>']
+    score = yield scores.get_match_score(match, tla)
+    responder('Team {0} scored {1} in match {2}'.format(tla, score, match))
+
+@control.handler('get-scores')
+@defer.inlineCallbacks
+def perform_get_scores(responder, options):
+    """Handle the `get-scores` command."""
+    match = options['<match-id>']
+    all_scores = yield scores.get_match_scores(match)
+    for tla, score in all_scores.iteritems():
+        responder('Team {0} scored {1} in match {2}'.format(tla, score, match))
+
 @control.handler('calc-league-points')
 @defer.inlineCallbacks
 def perform_calc_league_points(responder, options):
