@@ -21,6 +21,8 @@ Usage:
   compctl screen-override <id> <message>
   compctl screen-clear-override <id>
   compctl set-score <match-id> <tla> <score>
+  compctl calc-league-points <match-id>
+  compctl get-league-points <tla>
 
 """
 
