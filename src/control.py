@@ -20,6 +20,7 @@ Usage:
   compctl screen-set-mode <id> <mode>
   compctl screen-override <id> <message>
   compctl screen-clear-override <id>
+  compctl set-score <match-id> <tla> <score>
 
 """
 
