@@ -91,7 +91,6 @@ yaml_opt = '--yaml'
 @control.handler('set-score')
 def perform_set_score(responder, options):
     """Handle the `set-score` command."""
-    print options
     match = options['<match-id>']
     tla = options['<tla>']
     score = options['<score>']
