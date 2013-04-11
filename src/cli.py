@@ -5,6 +5,7 @@ Usage:
 
 Options:
   -h --help                 Display this help.
+  --yaml                    Call the command with a --yaml option
   -c <file> --config <file> Use an alternative config.yaml.
 """
 
@@ -24,7 +25,10 @@ soc.connect(('localhost', config.control_port))
 back = soc.recv(7)
 assert back == "Hello!\n", "Failed to establish connection (got '{0}')".format(back)
 
-cmd = ' ' .join(options['<command-detail>']) + "\n"
+cmd_details = options['<command-detail>']
+if options['--yaml']:
+    cmd_details.append('--yaml')
+cmd = ' ' .join(cmd_details) + "\n"
 #print cmd
 soc.send(cmd)
 while True:
