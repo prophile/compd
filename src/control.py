@@ -27,8 +27,8 @@ Usage:
   compctl get-league-points [--yaml] <tla>
   compctl add-match [--knockout] <name> <time>
   compctl del-match <name>
-  compctl set-match-teams <match> <team>...
-  compctl clear-match-teams <match>
+  compctl set-match-teams <name> <team>...
+  compctl clear-match-teams <name>
   compctl list-matches <from> <to>
 
 """

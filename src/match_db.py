@@ -33,8 +33,9 @@ class MatchDB(object):
         """Set the teams for a match."""
         redis_client.connection.delete('match:matches:{0}:teams'.format(name))
         if teams is not None:
-            redis_client.connection.rpush('match:matches:{0}:teams'.format(name),
-                                          *teams)
+            for team in teams:
+                redis_client.connection.rpush('match:matches:{0}:teams'.format(name),
+                                              team)
 
     def matches_between(self, start, end):
         """Get events between a given start and end point, specified in
@@ -80,7 +81,7 @@ def perform_del_match(responder, options):
 @control.handler('set-match-teams')
 def perform_set_match_teams(responder, options):
     matches.set_teams(options['<name>'],
-                      options['<teams>'])
+                      options['<team>'])
     responder('Teams set.')
 
 @control.handler('clear-match-teams')
