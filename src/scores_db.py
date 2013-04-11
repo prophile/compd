@@ -91,7 +91,6 @@ yaml_opt = '--yaml'
 @control.handler('set-score')
 def perform_set_score(responder, options):
     """Handle the `set-score` command."""
-    print options
     match = options['<match-id>']
     tla = options['<tla>']
     score = options['<score>']
@@ -169,3 +168,34 @@ def perform_get_league_points(responder, options):
         responder(yaml.dump({'points': league_points}))
     else:
         responder('Team {0} have {1} league points'.format(tla, league_points))
+
+@control.handler('get-dsqs')
+@defer.inlineCallbacks
+def perform_get_dsqs(responder, options):
+    """Handle the `get-dsqs` command."""
+    match = options['<match-id>']
+    dsqs = yield scores.teams_disqualified_in_match(match)
+    if options.get(yaml_opt, False):
+        responder(yaml.dump({'dsqs': dsqs}))
+    else:
+        if len(dsqs) == 0:
+            responder('No teams were disqualified from match {0}'.format(match))
+        else:
+            dsqs_str = ', '.join(dsqs)
+            responder('Team(s) {0} were disqualified from match {1}'.format(dsqs_str, match))
+
+@control.handler('disqualify')
+def perform_disqualify(responder, options):
+    """Handle the `disqualify` command."""
+    match = options['<match-id>']
+    tla = options['<tla>']
+    scores.disqualify(match, tla)
+    responder('Disqualified {0} in match {1}'.format(tla, match))
+
+@control.handler('re-qualify')
+def perform_re_qualify(responder, options):
+    """Handle the `re-qualify` command."""
+    match = options['<match-id>']
+    tla = options['<tla>']
+    scores.re_qualify(match, tla)
+    responder('Re-qualified {0} in match {1}'.format(tla, match))
