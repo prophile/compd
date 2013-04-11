@@ -563,3 +563,37 @@ def test_get_league_points_empty_yaml():
 
         # Check that the right text was output
         fake_responder.assert_called_once_with(yaml.dump({'points':pts}))
+
+def test_disqualify():
+    fake_disqualify = mock.Mock()
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.disqualify', fake_disqualify):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC' }
+
+        # Run the command
+        scores_db.perform_disqualify(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_disqualify.assert_called_once_with(1, 'ABC')
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with('Disqualified ABC in match 1')
+
+def test_re_qualify():
+    fake_re_qualify = mock.Mock()
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.re_qualify', fake_re_qualify):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC' }
+
+        # Run the command
+        scores_db.perform_re_qualify(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_re_qualify.assert_called_once_with(1, 'ABC')
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with('Re-qualified ABC in match 1')

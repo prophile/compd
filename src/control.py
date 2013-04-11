@@ -25,6 +25,8 @@ Usage:
   compctl get-scores [--yaml] <match-id>
   compctl calc-league-points [--yaml] <match-id>
   compctl get-league-points [--yaml] <tla>
+  compctl disqualify <match-id> <tla>
+  compctl re-qualify <match-id> <tla>
   compctl add-match [--knockout] <name> <time>
   compctl del-match <name>
   compctl set-match-teams <match> <team>...

@@ -168,3 +168,19 @@ def perform_get_league_points(responder, options):
         responder(yaml.dump({'points': league_points}))
     else:
         responder('Team {0} have {1} league points'.format(tla, league_points))
+
+@control.handler('disqualify')
+def perform_disqualify(responder, options):
+    """Handle the `disqualify` command."""
+    match = options['<match-id>']
+    tla = options['<tla>']
+    scores.disqualify(match, tla)
+    responder('Disqualified {0} in match {1}'.format(tla, match))
+
+@control.handler('re-qualify')
+def perform_re_qualify(responder, options):
+    """Handle the `re-qualify` command."""
+    match = options['<match-id>']
+    tla = options['<tla>']
+    scores.re_qualify(match, tla)
+    responder('Re-qualified {0} in match {1}'.format(tla, match))
