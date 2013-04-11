@@ -564,6 +564,84 @@ def test_get_league_points_empty_yaml():
         # Check that the right text was output
         fake_responder.assert_called_once_with(yaml.dump({'points':pts}))
 
+def test_get_dsqs():
+    dsqs = ['ABC', 'DEF']
+    fake_dsqs = defer.Deferred()
+    fake_dsqs.callback(dsqs)
+    fake_get_dsqs = mock.Mock(return_value = fake_dsqs)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.teams_disqualified_in_match', fake_get_dsqs):
+
+        options = { '<match-id>': 1 }
+
+        # Run the command
+        scores_db.perform_get_dsqs(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_dsqs.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with('Team(s) ABC, DEF were disqualified from match 1')
+
+def test_get_dsqs_yaml():
+    dsqs = ['ABC', 'DEF']
+    fake_dsqs = defer.Deferred()
+    fake_dsqs.callback(dsqs)
+    fake_get_dsqs = mock.Mock(return_value = fake_dsqs)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.teams_disqualified_in_match', fake_get_dsqs):
+
+        options = { '<match-id>': 1,
+                    '--yaml': True }
+
+        # Run the command
+        scores_db.perform_get_dsqs(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_dsqs.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with(yaml.dump({'dsqs': dsqs}))
+
+def test_get_dsqs_empty():
+    dsqs = []
+    fake_dsqs = defer.Deferred()
+    fake_dsqs.callback(dsqs)
+    fake_get_dsqs = mock.Mock(return_value = fake_dsqs)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.teams_disqualified_in_match', fake_get_dsqs):
+
+        options = { '<match-id>': 1 }
+
+        # Run the command
+        scores_db.perform_get_dsqs(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_dsqs.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with('No teams were disqualified from match 1')
+
+def test_get_dsqs_empty_yaml():
+    dsqs = []
+    fake_dsqs = defer.Deferred()
+    fake_dsqs.callback(dsqs)
+    fake_get_dsqs = mock.Mock(return_value = fake_dsqs)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.teams_disqualified_in_match', fake_get_dsqs):
+
+        options = { '<match-id>': 1,
+                    '--yaml': True }
+
+        # Run the command
+        scores_db.perform_get_dsqs(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_dsqs.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with(yaml.dump({'dsqs': dsqs}))
+
 def test_disqualify():
     fake_disqualify = mock.Mock()
     fake_responder = mock.Mock()

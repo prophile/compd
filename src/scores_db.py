@@ -169,6 +169,21 @@ def perform_get_league_points(responder, options):
     else:
         responder('Team {0} have {1} league points'.format(tla, league_points))
 
+@control.handler('get-dsqs')
+@defer.inlineCallbacks
+def perform_get_dsqs(responder, options):
+    """Handle the `get-dsqs` command."""
+    match = options['<match-id>']
+    dsqs = yield scores.teams_disqualified_in_match(match)
+    if options.get(yaml_opt, False):
+        responder(yaml.dump({'dsqs': dsqs}))
+    else:
+        if len(dsqs) == 0:
+            responder('No teams were disqualified from match {0}'.format(match))
+        else:
+            dsqs_str = ', '.join(dsqs)
+            responder('Team(s) {0} were disqualified from match {1}'.format(dsqs_str, match))
+
 @control.handler('disqualify')
 def perform_disqualify(responder, options):
     """Handle the `disqualify` command."""
