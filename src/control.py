@@ -21,10 +21,10 @@ Usage:
   compctl screen-override <id> <message>
   compctl screen-clear-override <id>
   compctl set-score <match-id> <tla> <score>
-  compctl get-score <match-id> <tla>
-  compctl get-scores <match-id>
-  compctl calc-league-points <match-id>
-  compctl get-league-points <tla>
+  compctl get-score [--yaml] <match-id> <tla>
+  compctl get-scores [--yaml] <match-id>
+  compctl calc-league-points [--yaml] <match-id>
+  compctl get-league-points [--yaml] <tla>
 
 """
 

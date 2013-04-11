@@ -3,6 +3,11 @@ import mock
 import redis_client
 import control
 from twisted.internet import defer
+import yaml
+
+# Unit tests
+
+## ScoresDB access
 
 def test_set_scores():
     fake_connection = mock.Mock()
@@ -215,3 +220,146 @@ def test_get_match_scores_empty():
         # Check that the right result was output
         info.addCallback(did_complete)
         did_complete.assert_called_once_with(None)
+
+## Commands
+
+def test_perform_set_score():
+    fake_set_score = mock.Mock()
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.set_match_score', fake_set_score):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC',
+                    '<score>': 3 }
+
+        # Run the command
+        scores_db.perform_set_score(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_set_score.assert_called_once_with(1, 'ABC', 3)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with('Scored 3 points for ABC in match 1')
+
+def test_perform_get_score():
+    fake_score = defer.Deferred()
+    fake_score.callback(3)
+    fake_get_score = mock.Mock(return_value = fake_score)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.get_match_score', fake_get_score):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC' }
+
+        # Run the command
+        scores_db.perform_get_score(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_score.assert_called_once_with(1, 'ABC')
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with('Team ABC scored 3 in match 1')
+
+def test_perform_get_score_yaml():
+    fake_score = defer.Deferred()
+    fake_score.callback(3)
+    fake_get_score = mock.Mock(return_value = fake_score)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.get_match_score', fake_get_score):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC',
+                    '--yaml': True }
+
+        # Run the command
+        scores_db.perform_get_score(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_score.assert_called_once_with(1, 'ABC')
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with(yaml.dump({'score':3}))
+
+def test_perform_get_scores():
+    fake_scores = defer.Deferred()
+    results = {'ABC':1, 'DEF':4}
+    fake_scores.callback(results)
+    fake_get_scores = mock.Mock(return_value = fake_scores)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.get_match_scores', fake_get_scores):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC' }
+
+        # Run the command
+        scores_db.perform_get_scores(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_scores.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_has_calls([mock.call('Team ABC scored 1 in match 1'),
+                                         mock.call('Team DEF scored 4 in match 1')],
+                                        any_order = True)
+
+def test_perform_get_scores_empty():
+    fake_scores = defer.Deferred()
+    results = None
+    fake_scores.callback(results)
+    fake_get_scores = mock.Mock(return_value = fake_scores)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.get_match_scores', fake_get_scores):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC' }
+
+        # Run the command
+        scores_db.perform_get_scores(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_scores.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once('No scores available for match 1')
+
+def test_perform_get_scores_yaml():
+    fake_scores = defer.Deferred()
+    results = {'ABC':1, 'DEF':4}
+    fake_scores.callback(results)
+    fake_get_scores = mock.Mock(return_value = fake_scores)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.get_match_scores', fake_get_scores):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC',
+                    '--yaml': True }
+
+        # Run the command
+        scores_db.perform_get_scores(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_scores.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with(yaml.dump({'scores':results}))
+
+def test_perform_get_scores_empty_yaml():
+    fake_scores = defer.Deferred()
+    results = None
+    fake_scores.callback(results)
+    fake_get_scores = mock.Mock(return_value = fake_scores)
+    fake_responder = mock.Mock()
+    with mock.patch('scores_db.scores.get_match_scores', fake_get_scores):
+
+        options = { '<match-id>': 1,
+                    '<tla>': 'ABC',
+                    '--yaml': True }
+
+        # Run the command
+        scores_db.perform_get_scores(fake_responder, options)
+
+        # Assert that the right things were called
+        fake_get_scores.assert_called_once_with(1)
+
+        # Check that the right text was output
+        fake_responder.assert_called_once_with(yaml.dump({'scores':results}))

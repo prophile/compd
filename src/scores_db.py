@@ -5,6 +5,7 @@ import redis_client
 import control
 import re
 from twisted.internet import defer
+import yaml
 
 import ranker
 
@@ -85,10 +86,12 @@ class ScoresDB(object):
         defer.returnValue(value)
 
 scores = ScoresDB()
+yaml_opt = '--yaml'
 
 @control.handler('set-score')
 def perform_set_score(responder, options):
     """Handle the `set-score` command."""
+    print options
     match = options['<match-id>']
     tla = options['<tla>']
     score = options['<score>']
@@ -102,7 +105,11 @@ def perform_get_score(responder, options):
     match = options['<match-id>']
     tla = options['<tla>']
     score = yield scores.get_match_score(match, tla)
-    responder('Team {0} scored {1} in match {2}'.format(tla, score, match))
+
+    if options.get(yaml_opt, False):
+        responder(yaml.dump({'score': score}))
+    else:
+        responder('Team {0} scored {1} in match {2}'.format(tla, score, match))
 
 @control.handler('get-scores')
 @defer.inlineCallbacks
@@ -110,8 +117,15 @@ def perform_get_scores(responder, options):
     """Handle the `get-scores` command."""
     match = options['<match-id>']
     all_scores = yield scores.get_match_scores(match)
-    for tla, score in all_scores.iteritems():
-        responder('Team {0} scored {1} in match {2}'.format(tla, score, match))
+
+    if options.get(yaml_opt, False):
+        responder(yaml.dump({'scores': all_scores}))
+    else:
+        if all_scores is None:
+            responder('No scores available for match {0}'.format(match))
+        else:
+            for tla, score in all_scores.iteritems():
+                responder('Team {0} scored {1} in match {2}'.format(tla, score, match))
 
 @control.handler('calc-league-points')
 @defer.inlineCallbacks
@@ -119,14 +133,23 @@ def perform_calc_league_points(responder, options):
     """Handle the `calc-league-points` command."""
     match = options['<match-id>']
     match_scores = yield scores.get_match_scores(match)
+
     if match_scores is None:
-        responder('No scores available for match {0}'.format(match))
+        if options.get(yaml_opt, False):
+            responder(yaml.dump({'points': None}))
+        else:
+            responder('No scores available for match {0}'.format(match))
         return
+
     dsq_teams = yield scores.teams_disqualified_in_match(match)
     league_points = ranker.get_ranked_points(match_scores, dsq_teams)
     scores.set_league_points(match, league_points)
-    for tla, pts in league_points.iteritems():
-        responder('Team {0} earned {1} points from match {2}'.format(tla, pts, match))
+
+    if options.get(yaml_opt, False):
+        responder(yaml.dump({'points': league_points}))
+    else:
+        for tla, pts in league_points.iteritems():
+            responder('Team {0} earned {1} points from match {2}'.format(tla, pts, match))
 
 @control.handler('get-league-points')
 @defer.inlineCallbacks
@@ -134,8 +157,15 @@ def perform_get_league_points(responder, options):
     """Handle the `get-league-points` command."""
     tla = options['<tla>']
     league_points = yield scores.get_league_points(tla)
-    print league_points
+
     if league_points is None:
-        responder('No scores available for team {0}'.format(tla))
+        if options.get(yaml_opt, False):
+            responder(yaml.dump({'points': None}))
+        else:
+            responder('No scores available for team {0}'.format(tla))
         return
-    responder('Team {0} have {1} league points'.format(tla, league_points))
+
+    if options.get(yaml_opt, False):
+        responder(yaml.dump({'points': league_points}))
+    else:
+        responder('Team {0} have {1} league points'.format(tla, league_points))
