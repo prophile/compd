@@ -51,6 +51,8 @@ def got_redis_client():
     import screen_db
     print 'Loading scores DB...'
     import scores_db
+    print 'Loading match DB...'
+    import match_db
     print 'Done configuring.'
 
 def got_redis_server():
