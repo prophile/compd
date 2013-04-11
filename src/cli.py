@@ -1,7 +1,7 @@
 """compd-cli
 
 Usage:
-  cli.py [options] <command-detail> <command-detail>...
+  cli.py [options] <command-detail>...
 
 Options:
   -h --help                 Display this help.
