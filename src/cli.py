@@ -25,7 +25,7 @@ back = soc.recv(7)
 assert back == "Hello!\n", "Failed to establish connection (got '{0}')".format(back)
 
 cmd = ' ' .join(options['<command-detail>']) + "\n"
-print cmd
+#print cmd
 soc.send(cmd)
 while True:
     back = soc.recv(256)
